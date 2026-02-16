@@ -242,50 +242,70 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   double celebrationScale = 1.0 + (_celebrationController.value * 0.15);
                                   return Transform.scale(
                                     scale: celebrationScale,
-                                    child: SizedBox(
-                                      height: isMobile ? 100 : 120,
-                                      width: isMobile ? 100 : 120,
+                                    child: Container(
+                                      width: 110,
+                                      height: 110,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF26A69A).withOpacity(0.25),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                          BoxShadow(
+                                            color: const Color(0xFF00E5FF).withOpacity(0.15),
+                                            blurRadius: 15,
+                                            offset: const Offset(0, 6),
+                                          ),
+                                        ],
+                                      ),
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
-                                          // Background ring
+                                          // Glowing background circle
                                           Container(
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black.withOpacity(0.15),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(0, 4),
-                                                ),
-                                              ],
-                                            ),
-                                            child: CircularProgressIndicator(
-                                              value: animatedPercent,
-                                              strokeWidth: isMobile ? 8 : 10,
-                                              backgroundColor: Colors.white.withOpacity(0.25),
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                Color.lerp(const Color(0xFF26A69A), const Color(0xFF00E5FF), animatedPercent) ?? const Color(0xFF26A69A),
-                                              ),
-                                              strokeCap: StrokeCap.round,
-                                            ),
-                                          ),
-                                          // Center text with glow effect
-                                          Center(
-                                            child: Text(
-                                              "${(animatedPercent * 100).toInt()}%",
-                                              style: TextStyle(
-                                                fontSize: isMobile ? 20 : 28,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                shadows: const [
-                                                  Shadow(
-                                                    offset: Offset(0, 2),
-                                                    blurRadius: 4,
-                                                    color: Color.fromARGB(40, 0, 0, 0),
-                                                  ),
+                                              gradient: RadialGradient(
+                                                colors: [
+                                                  Colors.white.withOpacity(0.06),
+                                                  Colors.white.withOpacity(0.02),
                                                 ],
                                               ),
+                                            ),
+                                          ),
+                                          // Progress ring with gradient
+                                          CircularProgressIndicator(
+                                            value: animatedPercent,
+                                            strokeWidth: 8,
+                                            backgroundColor: Colors.white.withOpacity(0.15),
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              Color.lerp(const Color(0xFF26A69A), const Color(0xFF00E5FF), animatedPercent) ?? const Color(0xFF26A69A),
+                                            ),
+                                            strokeCap: StrokeCap.round,
+                                          ),
+                                          // Center content
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "${(animatedPercent * 100).toInt()}%",
+                                                  style: const TextStyle(
+                                                    fontSize: 28,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: Colors.white,
+                                                    shadows: [
+                                                      Shadow(offset: Offset(0, 2), blurRadius: 8, color: Color.fromARGB(80, 0, 0, 0)),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "Complete",
+                                                  style: TextStyle(fontSize: 9, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w500),
+                                                )
+                                              ],
                                             ),
                                           )
                                         ],
@@ -294,28 +314,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   );
                                 },
                               ),
-                              SizedBox(height: isMobile ? 16 : 0),
+                              SizedBox(height: 24),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     "Today's Goal",
-                                    style: TextStyle(fontSize: isMobile ? 14 : 16, color: Colors.white70, fontWeight: FontWeight.w500),
+                                    style: TextStyle(fontSize: 14, color: Colors.white70, fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     "$done/${today.length} Completed",
-                                    style: TextStyle(fontSize: isMobile ? 20 : 24, fontWeight: FontWeight.bold, color: Colors.white),
+                                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 12),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                     decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
                                     child: Text(
                                       percentText == 100 ? "🔥 All set!" : "$percentText% done",
-                                      style: TextStyle(fontSize: isMobile ? 12 : 13, fontWeight: FontWeight.w600, color: Colors.white),
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
                                     ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildStatBox("Streak", "7", "🔥", isMobile),
+                                      _buildStatBox("Today", "$done/${today.length}", "✓", isMobile),
+                                      _buildStatBox("Score", "${(percent * 100).toInt()}", "⭐", isMobile),
+                                    ],
                                   )
                                 ],
                               )
@@ -331,50 +360,70 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     double celebrationScale = 1.0 + (_celebrationController.value * 0.15);
                                     return Transform.scale(
                                       scale: celebrationScale,
-                                      child: SizedBox(
-                                        height: 120,
-                                        width: 120,
+                                      child: Container(
+                                        width: 140,
+                                        height: 140,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFF26A69A).withOpacity(0.25),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                            BoxShadow(
+                                              color: const Color(0xFF00E5FF).withOpacity(0.15),
+                                              blurRadius: 15,
+                                              offset: const Offset(0, 6),
+                                            ),
+                                          ],
+                                        ),
                                         child: Stack(
                                           fit: StackFit.expand,
                                           children: [
-                                            // Background ring
+                                            // Glowing background
                                             Container(
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black.withOpacity(0.15),
-                                                    blurRadius: 8,
-                                                    offset: const Offset(0, 4),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: CircularProgressIndicator(
-                                                value: animatedPercent,
-                                                strokeWidth: 10,
-                                                backgroundColor: Colors.white.withOpacity(0.25),
-                                                valueColor: AlwaysStoppedAnimation<Color>(
-                                                  Color.lerp(const Color(0xFF26A69A), const Color(0xFF00E5FF), animatedPercent) ?? const Color(0xFF26A69A),
-                                                ),
-                                                strokeCap: StrokeCap.round,
-                                              ),
-                                            ),
-                                            // Center text with glow effect
-                                            Center(
-                                              child: Text(
-                                                "${(animatedPercent * 100).toInt()}%",
-                                                style: const TextStyle(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  shadows: [
-                                                    Shadow(
-                                                      offset: Offset(0, 2),
-                                                      blurRadius: 4,
-                                                      color: Color.fromARGB(40, 0, 0, 0),
-                                                    ),
+                                                gradient: RadialGradient(
+                                                  colors: [
+                                                    Colors.white.withOpacity(0.06),
+                                                    Colors.white.withOpacity(0.02),
                                                   ],
                                                 ),
+                                              ),
+                                            ),
+                                            // Progress ring
+                                            CircularProgressIndicator(
+                                              value: animatedPercent,
+                                              strokeWidth: 10,
+                                              backgroundColor: Colors.white.withOpacity(0.15),
+                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                Color.lerp(const Color(0xFF26A69A), const Color(0xFF00E5FF), animatedPercent) ?? const Color(0xFF26A69A),
+                                              ),
+                                              strokeCap: StrokeCap.round,
+                                            ),
+                                            // Center content
+                                            Center(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "${(animatedPercent * 100).toInt()}%",
+                                                    style: const TextStyle(
+                                                      fontSize: 40,
+                                                      fontWeight: FontWeight.w900,
+                                                      color: Colors.white,
+                                                      shadows: [
+                                                        Shadow(offset: Offset(0, 3), blurRadius: 10, color: Color.fromARGB(100, 0, 0, 0)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const Text(
+                                                    "Completed",
+                                                    style: TextStyle(fontSize: 11, color: Colors.white70, fontWeight: FontWeight.w600),
+                                                  )
+                                                ],
                                               ),
                                             )
                                           ],
@@ -390,22 +439,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Text(
-                                        "Today's Goal",
-                                        style: TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.w500),
+                                        "Today's Progress",
+                                        style: TextStyle(fontSize: 18, color: Colors.white70, fontWeight: FontWeight.w500),
                                       ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: 12),
                                       Text(
-                                        "$done/${today.length} Completed",
-                                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                                        "$done/${today.length} Habits Completed",
+                                        style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
                                       ),
-                                      const SizedBox(height: 10),
+                                      const SizedBox(height: 16),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                         decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
                                         child: Text(
-                                          percentText == 100 ? "🔥 All set!" : "$percentText% done",
+                                          percentText == 100 ? "🔥 Amazing! All habits completed!" : "Keep going! $percentText% progress!",
                                           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
                                         ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _buildStatBox("🔥 Streak", "7 days", "", false),
+                                          _buildStatBox("⭐ Score", "${(percent * 100).toInt()}/100", "", false),
+                                          _buildStatBox("✓ Done", "$done/${today.length}", "", false),
+                                        ],
                                       )
                                     ],
                                   ),
@@ -594,6 +652,50 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       return "📋 Yesterday";
     }
     return "${date.day}/${date.month}/${date.year}";
+  }
+
+  Widget _buildStatBox(String label, String value, String emoji, bool isMobileLayout) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: isMobileLayout ? 12 : 16, vertical: isMobileLayout ? 10 : 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            emoji,
+            style: const TextStyle(fontSize: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: isMobileLayout ? 13 : 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: isMobileLayout ? 9 : 10,
+              color: Colors.white.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void addHabit() {
